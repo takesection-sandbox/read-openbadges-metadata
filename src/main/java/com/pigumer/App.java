@@ -67,8 +67,8 @@ public class App
             }
         }
         System.out.println("---");
-        System.out.println("Scrum:");
-        try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("sa-csm-600.png")) {
+        System.out.println("Train the Trainer:");
+        try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("TTT.png")) {
             String json = app.analyze(in);
             if (json != null) {
                 System.out.println(json);
