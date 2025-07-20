@@ -33,7 +33,8 @@ public class AppTest
      */
     public void testApp() throws Exception
     {
-        App.main(null);
+        String[] args = { "badges/aws-certified-machine-learning-engineer-associate.png" };
+        App.main(args);
         assertTrue( true );
     }
 }
