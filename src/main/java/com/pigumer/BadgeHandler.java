@@ -17,7 +17,7 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.BadgeObject, St
 
     public record BadgeObject(String bucketName, String key) {}
 
-    private static final S3Client s3Client = S3Client.builder().region(Region.AP_NORTHEAST_1).build();
+    private static final S3Client s3Client = S3Client.builder().build();
 
     @Override
     public String handleRequest(BadgeObject in, Context context) {
