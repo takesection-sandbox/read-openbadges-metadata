@@ -2,16 +2,13 @@ package com.pigumer;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.pigumer.logic.Logic;
 import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.ByteArrayInputStream;
 
 public class BadgeHandler implements RequestHandler<BadgeHandler.BadgeObject, String> {
 
@@ -27,12 +24,12 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.BadgeObject, St
                 .key(in.key)
                 .build();
         ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req);
+
         try (ByteArrayInputStream stream = new ByteArrayInputStream(res.readAllBytes())) {
             Logic logic = new Logic();
             return logic.analyze(stream);
         } catch (Exception e) {
-            context.getLogger().log(e.getMessage());
-            return e.getMessage();
+            throw new RuntimeException(e);
         }
     }
 }

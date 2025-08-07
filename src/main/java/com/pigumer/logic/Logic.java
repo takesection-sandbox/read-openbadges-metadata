@@ -27,8 +27,10 @@ public class Logic {
                 value = attribute.getNodeValue();
             }
         }
+
         System.out.println(keyword + ": " + value);
-        if (keyword.equals("openbadges")) {
+
+        if (keyword != null && keyword.equals("openbadges")) {
             return value;
         }
         return null;
