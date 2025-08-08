@@ -5,6 +5,10 @@ on:
       - "src/**"
   workflow_dispatch:
 
+permissions:
+  id-token: write   # This is required for OIDC authentication
+  contents: read    # This is required to checkout the repository
+
 jobs:
   build:
     name: build
