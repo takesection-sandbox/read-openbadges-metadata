@@ -1,4 +1,4 @@
-name: build Re:VIEW PDF
+name: build
 on:
   push:
     paths:
