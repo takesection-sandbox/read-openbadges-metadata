@@ -29,6 +29,6 @@ jobs:
         with:
           aws-region: ap-northeast-1
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-      - run: aws s3 cp target/ s3://sslabhnd/lambda/ --include "*-SNAPSHOT.jar"
+      - run: aws s3 cp target s3://sslabhnd/lambda/ --include "*-SNAPSHOT.jar"
 
 
