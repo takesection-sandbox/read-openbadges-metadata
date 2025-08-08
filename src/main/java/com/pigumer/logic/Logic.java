@@ -28,7 +28,7 @@ public class Logic {
             }
         }
 
-        System.out.println(keyword + ": " + value);
+        // System.out.println(keyword + ": " + value);
 
         if (keyword != null && keyword.equals("openbadges")) {
             return value;
