@@ -11,34 +11,22 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.stream.ImageInputStream;
 import java.io.InputStream;
-import java.util.Iterator;
+import java.util.*;
 
 public class Logic {
 
-    private String getOpenBadges(NamedNodeMap textEntries) {
-        String keyword = null;
-        String value = null;
+    private Map<String, String> getAttributes(NamedNodeMap textEntries) {
+        HashMap<String, String> map = new HashMap<String, String>();
         for (int i = 0; i < textEntries.getLength(); i++) {
             Node attribute = textEntries.item(i);
-            if (attribute.getNodeName().equals("keyword")) {
-                keyword = attribute.getNodeValue();
-            }
-            if (attribute.getNodeName().equals("value")) {
-                value = attribute.getNodeValue();
-            }
+            map.put(attribute.getNodeName(), attribute.getNodeValue());
         }
-
-        // System.out.println(keyword + ": " + value);
-
-        if (keyword != null && keyword.equals("openbadges")) {
-            return value;
-        }
-        return null;
+        return map;
     }
 
-    public String analyze(InputStream in) throws Exception {
+    public Collection<Map<String, String>> analyze(InputStream in) throws Exception {
         // inのイメージファイルのメタデータを読み取る
-        String info = null;
+        Collection<Map<String, String>> result = new ArrayList<Map<String, String>>();
         try (ImageInputStream is = ImageIO.createImageInputStream(in)) {
             Iterator<ImageReader> readers = ImageIO.getImageReaders(is);
             ImageReader reader = readers.next();
@@ -54,14 +42,11 @@ public class Logic {
                     for (int j = 0; j < textNodes.getLength(); j++) {
                         Node item = textNodes.item(j);
                         NamedNodeMap map = item.getAttributes();
-                        String json = getOpenBadges(map);
-                        if (json != null) {
-                            info = json;
-                        }
+                        result.add(getAttributes(map));
                     }
                 }
             }
         }
-        return info;
+        return result;
     }
 }

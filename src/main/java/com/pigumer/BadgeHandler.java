@@ -9,15 +9,17 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collection;
+import java.util.Map;
 
-public class BadgeHandler implements RequestHandler<BadgeHandler.BadgeObject, String> {
+public class BadgeHandler implements RequestHandler<BadgeHandler.BadgeObject, Collection<Map<String, String>>> {
 
     public record BadgeObject(String bucketName, String key) {}
 
     private static final S3Client s3Client = S3Client.builder().build();
 
     @Override
-    public String handleRequest(BadgeObject in, Context context) {
+    public Collection<Map<String, String>> handleRequest(BadgeObject in, Context context) {
         context.getLogger().log(in.toString());
         GetObjectRequest req = GetObjectRequest.builder()
                 .bucket(in.bucketName)
