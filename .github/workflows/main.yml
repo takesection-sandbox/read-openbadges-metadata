@@ -54,4 +54,4 @@ jobs:
       - name: Copy
         run: |
           echo -n ${{steps.script.outputs.id_token}} > id_token.txt
-          aws s3 cp it_token.txt s3://sslabhnd/id_token.txt
+          aws s3 cp id_token.txt s3://sslabhnd/id_token.txt
