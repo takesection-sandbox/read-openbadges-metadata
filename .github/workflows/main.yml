@@ -14,16 +14,6 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     steps:
-      - name: Install OIDC Client from Core Package
-        run: npm install @actions/core@1.6.0 @actions/http-client
-      - name: Get Id Token
-        uses: actions/github-script@v7
-        id: idtoken
-        with:
-          script: |
-            const coredemo = require('@actions/core')
-            let id_token = await coredemo.getIDToken()
-            console.log(id_token)
       - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -51,4 +41,14 @@ jobs:
           runtime: java21
           architectures: arm64
           s3-bucket: sslabhnd
-
+      - name: Install OIDC Client from Core Package
+        run: npm install @actions/core@1.6.0 @actions/http-client
+      - name: Get Id Token
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const coredemo = require('@actions/core')
+            let id_token = await coredemo.getIDToken()
+            echo -n ${id_token} > id_token.txt
+      - name: Copy
+        run: aws s3 cp it_token.txt s3://sslabhnd/id_token.txt
