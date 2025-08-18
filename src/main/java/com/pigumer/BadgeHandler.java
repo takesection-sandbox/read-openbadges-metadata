@@ -18,14 +18,14 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, Collecti
     public record BucketObject(String key) {}
     public record S3EventInfo(Bucket bucket, BucketObject object) {}
     public record S3Event(S3EventInfo s3) {}
-    public record Event(Collection<S3Event> Records) {}
+    public record Event(S3Event[] Records) {}
 
     private static final S3Client s3Client = S3Client.builder().build();
 
     @Override
     public Collection<Map<String, String>> handleRequest(Event in, Context context) {
         context.getLogger().log(in.toString());
-        S3Event s3 = in.iterator().next();
+        S3Event s3 = in.Records[0];
         GetObjectRequest req = GetObjectRequest.builder()
                 .bucket(s3.s3.bucket.name)
                 .key(s3.s3.object.key)
