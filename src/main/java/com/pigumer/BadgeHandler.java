@@ -34,7 +34,7 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, Collecti
 
         try (ByteArrayInputStream stream = new ByteArrayInputStream(res.readAllBytes())) {
             Logic logic = new Logic();
-            String json = logic.analyze(stream);
+            Collection<Map<String, String>> json = logic.analyze(stream);
             context.getLogger().log(json.toString());
             return json;
         } catch (Exception e) {
