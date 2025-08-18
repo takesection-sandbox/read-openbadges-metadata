@@ -23,7 +23,7 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, Collecti
     private static final S3Client s3Client = S3Client.builder().build();
 
     @Override
-    public Collection<Map<String, String>> handleRequest(Collection<S3Event> in, Context context) {
+    public Collection<Map<String, String>> handleRequest(Event in, Context context) {
         context.getLogger().log(in.toString());
         S3Event s3 = in.iterator().next();
         GetObjectRequest req = GetObjectRequest.builder()
