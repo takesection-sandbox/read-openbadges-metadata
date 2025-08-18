@@ -12,7 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Collection;
 import java.util.Map;
 
-public class BadgeHandler implements RequestHandler<BadgeHandler.Event, Collection<Map<String, String>>> {
+public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHandler.MetaText> {
 
     public record Bucket(String name) {}
     public record BucketObject(String key) {}
@@ -20,10 +20,12 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, Collecti
     public record S3Event(S3EventInfo s3) {}
     public record Event(S3Event[] Records) {}
 
+    public record MetaText(String bucket, String key, Collection<Map<String, String>> text) {}
+
     private static final S3Client s3Client = S3Client.builder().build();
 
     @Override
-    public Collection<Map<String, String>> handleRequest(Event in, Context context) {
+    public MetaText handleRequest(Event in, Context context) {
         S3Event s3 = in.Records[0];
         String bucketName = s3.s3.bucket.name;
         String key = s3.s3.object.key;
@@ -36,9 +38,9 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, Collecti
 
         try (ByteArrayInputStream stream = new ByteArrayInputStream(res.readAllBytes())) {
             Logic logic = new Logic();
-            Collection<Map<String, String>> json = logic.analyze(stream);
-            context.getLogger().log(json.toString());
-            return json;
+            Collection<Map<String, String>> text = logic.analyze(stream);
+            context.getLogger().log(text.toString());
+            return new MetaText(bucketName, key, text);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
