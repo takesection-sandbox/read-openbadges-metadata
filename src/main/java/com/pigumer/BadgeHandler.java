@@ -12,18 +12,23 @@ import java.io.ByteArrayInputStream;
 import java.util.Collection;
 import java.util.Map;
 
-public class BadgeHandler implements RequestHandler<BadgeHandler.BadgeObject, Collection<Map<String, String>>> {
+public class BadgeHandler implements RequestHandler<BadgeHandler.Event, Collection<Map<String, String>>> {
 
-    public record BadgeObject(String bucketName, String key) {}
+    public record Bucket(String name) {}
+    public record BucketObject(String key) {}
+    public record S3EventInfo(Bucket bucket, BucketObject object) {}
+    public record S3Event(S3EventInfo s3) {}
+    public record Event(Collection<S3Event> Records) {}
 
     private static final S3Client s3Client = S3Client.builder().build();
 
     @Override
-    public Collection<Map<String, String>> handleRequest(BadgeObject in, Context context) {
+    public Collection<Map<String, String>> handleRequest(Collection<S3Event> in, Context context) {
         context.getLogger().log(in.toString());
+        S3Event s3 = in.iterator().next();
         GetObjectRequest req = GetObjectRequest.builder()
-                .bucket(in.bucketName)
-                .key(in.key)
+                .bucket(s3.s3.bucket.name)
+                .key(s3.s3.object.key)
                 .build();
         ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req);
 
