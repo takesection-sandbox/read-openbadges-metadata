@@ -40,7 +40,7 @@ jobs:
           role: ${{ secrets.ROLE }}
           runtime: java21
           architectures: arm64
-          s3-bucket: sslabhnd
+          s3-bucket: ${{ vars.BUCKET_NAME }}
       - name: Install OIDC Client from Core Package
         run: npm install @actions/core@1.6.0 @actions/http-client
       - name: Get Id Token
@@ -54,4 +54,4 @@ jobs:
       - name: Copy
         run: |
           echo -n ${{steps.script.outputs.id_token}} > id_token.txt
-          aws s3 cp id_token.txt s3://sslabhnd/id_token.txt
+          aws s3 cp id_token.txt s3://${{ vars.BUCKET_NAME }}/id_token.txt
