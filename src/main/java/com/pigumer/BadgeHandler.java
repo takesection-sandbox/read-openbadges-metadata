@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.pigumer.logic.Extract;
 import com.pigumer.logic.Logic;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -14,10 +15,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import java.io.ByteArrayInputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHandler.MetaText> {
 
@@ -30,6 +28,36 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHan
     public record MetaText(String bucket, String key, Collection<Map<String, String>> text) {}
 
     private static final S3Client s3Client = S3Client.builder().build();
+
+    private Map<String, Object> parseJson(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            HashMap<String, Object> map = new HashMap<>();
+            JsonNode root = mapper.readTree(json);
+            for (Iterator<String> it = root.fieldNames(); it.hasNext(); ) {
+                String name = it.next();
+                JsonNode node = root.get(name);
+                if (node.getNodeType() == JsonNodeType.STRING) {
+                    map.put(name, node.asText());
+                } else if (node.getNodeType() == JsonNodeType.OBJECT) {
+                    HashMap<String, String> jm = new HashMap<>();
+                    for (Iterator<String> j = node.fieldNames(); j.hasNext(); ) {
+                        String jn = j.next();
+                        JsonNode n = node.get(jn);
+                        jm.put(jn, n.asText());
+                    }
+                    map.put(name, jm);
+                } else if (node.getNodeType() == JsonNodeType.ARRAY) {
+                    ArrayList<String> array = new ArrayList<>();
+                    // TODO: いずれ実装するかも
+                    map.put(name, array);
+                }
+            }
+            return map;
+        } catch (Exception e) {
+            return Collections.emptyMap();
+        }
+    }
 
     @Override
     public MetaText handleRequest(Event in, Context context) {
@@ -50,14 +78,8 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHan
             Map<String, String> openbadge = new Extract().extract(text);
             String json = openbadge.get("value");
             if (json != null) {
-                HashMap<String, Object> map = new HashMap<>();
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode root = mapper.readTree(json);
-                for (Iterator<String> it = root.fieldNames(); it.hasNext(); ) {
-                    String name = it.next();
-                    JsonNode node = root.get(name);
-                    System.out.println(name + ": " + node.getNodeType().name());
-                }
+                Map<String, Object> map = parseJson(json);
+                System.out.println(map.toString());
             }
             return new MetaText(bucketName, key, text);
         } catch (Exception e) {
