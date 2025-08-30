@@ -19,7 +19,7 @@ public class OpenBadgesTable {
         this.tableName = tableName;
     }
 
-    public PutItemResponse put(Map<String, Object> map) {
+    public PutItemResponse put(String key, Map<String, Object> map) {
         String badge = (String) map.get("badge");
         String id = (String) map.get("id");
         String identity = (String) ((Map<String, String>) map.get("recipient")).get("identity");
@@ -31,6 +31,7 @@ public class OpenBadgesTable {
         itemMap.put("issuedOn", AttributeValue.builder().s(issuedOn).build());
         itemMap.put("identity", AttributeValue.builder().s(identity).build());
         itemMap.put("row", AttributeValue.builder().s(row).build());
+        itemMap.put("fileName", AttributeValue.builder().s(key).build());
         PutItemRequest putItemRequest = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(itemMap)

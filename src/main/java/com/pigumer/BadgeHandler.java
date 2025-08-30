@@ -84,7 +84,7 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHan
                 Map<String, Object> map = parseJson(json);
                 System.out.println(map.toString());
 
-                new OpenBadgesTable(tableName).put(map);
+                new OpenBadgesTable(tableName).put(key, map);
             }
 
             return new MetaText(bucketName, key, text);
