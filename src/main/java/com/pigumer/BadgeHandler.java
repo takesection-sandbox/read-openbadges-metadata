@@ -2,6 +2,7 @@ package com.pigumer;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.pigumer.logic.Extract;
 import com.pigumer.logic.Logic;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -39,7 +40,12 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHan
         try (ByteArrayInputStream stream = new ByteArrayInputStream(res.readAllBytes())) {
             Logic logic = new Logic();
             Collection<Map<String, String>> text = logic.analyze(stream);
-            context.getLogger().log(text.toString());
+
+            Map<String, String> openbadge = new Extract().extract(text);
+            String json = openbadge.get("value");
+            if (json != null) {
+                context.getLogger().log(json);
+            }
             return new MetaText(bucketName, key, text);
         } catch (Exception e) {
             throw new RuntimeException(e);
