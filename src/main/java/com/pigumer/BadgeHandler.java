@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.pigumer.database.OpenBadgesTable;
 import com.pigumer.logic.Extract;
 import com.pigumer.logic.Logic;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -28,6 +29,8 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHan
     public record MetaText(String bucket, String key, Collection<Map<String, String>> text) {}
 
     private static final S3Client s3Client = S3Client.builder().build();
+
+    private String tableName = System.getenv("TABLE_NAME");
 
     private Map<String, Object> parseJson(String json) {
         ObjectMapper mapper = new ObjectMapper();
@@ -80,7 +83,10 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHan
             if (json != null) {
                 Map<String, Object> map = parseJson(json);
                 System.out.println(map.toString());
+
+                new OpenBadgesTable(tableName).put(map);
             }
+
             return new MetaText(bucketName, key, text);
         } catch (Exception e) {
             throw new RuntimeException(e);
