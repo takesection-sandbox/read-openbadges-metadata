@@ -32,6 +32,10 @@ public class OpenBadgesTable {
         itemMap.put("identity", AttributeValue.builder().s(identity).build());
         itemMap.put("row", AttributeValue.builder().s(row).build());
         itemMap.put("fileName", AttributeValue.builder().s(key).build());
+        String expires = (String) map.get("expires");
+        if (expires != null) {
+            itemMap.put("expires", AttributeValue.builder().s(expires).build());
+        }
         PutItemRequest putItemRequest = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(itemMap)
