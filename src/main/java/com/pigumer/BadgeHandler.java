@@ -2,15 +2,21 @@ package com.pigumer;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pigumer.logic.Extract;
 import com.pigumer.logic.Logic;
 import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.protocols.jsoncore.JsonNodeParser;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHandler.MetaText> {
@@ -44,7 +50,14 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHan
             Map<String, String> openbadge = new Extract().extract(text);
             String json = openbadge.get("value");
             if (json != null) {
-                context.getLogger().log(json);
+                HashMap<String, Object> map = new HashMap<>();
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode root = mapper.readTree(json);
+                for (Iterator<String> it = root.fieldNames(); it.hasNext(); ) {
+                    String name = it.next();
+                    JsonNode node = root.get(name);
+                    System.out.println(name + ": " + node.getNodeType().name());
+                }
             }
             return new MetaText(bucketName, key, text);
         } catch (Exception e) {
