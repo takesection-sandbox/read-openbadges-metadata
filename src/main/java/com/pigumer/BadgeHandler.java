@@ -2,7 +2,6 @@ package com.pigumer;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
@@ -10,7 +9,6 @@ import com.pigumer.database.OpenBadgesTable;
 import com.pigumer.logic.Extract;
 import com.pigumer.logic.Logic;
 import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.protocols.jsoncore.JsonNodeParser;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
@@ -84,7 +82,7 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHan
                 Map<String, Object> map = parseJson(json);
                 System.out.println(map.toString());
 
-                new OpenBadgesTable(tableName).put(key, map);
+                new OpenBadgesTable(tableName).put(key, map, text);
             }
 
             return new MetaText(bucketName, key, text);
