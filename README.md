@@ -1,10 +1,11 @@
 OpenBadgeの画像ファイル(PNG)からメタ情報を読み出す
 ===
 
-## AWS Lambdaでデプロイした場合のパラメータ
+## 構成
 
-- bucketName: バケット名
-- key: ファイル名
+S3にアップロードされたOpenBadgesイメージ (png) からメタ情報を読み出して、DynamoDBに保存します。
+
+!()[openbadge.png]
 
 ## 参考
 
