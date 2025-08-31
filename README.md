@@ -5,7 +5,7 @@ OpenBadgeの画像ファイル(PNG)からメタ情報を読み出す
 
 S3にアップロードされたOpenBadgesイメージ (png) からメタ情報を読み出して、DynamoDBに保存します。
 
-!()[openbadge.png]
+![](openbadge.png)
 
 ## 参考
 
