@@ -75,16 +75,14 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHan
         try (ByteArrayInputStream stream = new ByteArrayInputStream(res.readAllBytes())) {
             Logic logic = new Logic();
             Collection<Map<String, String>> text = logic.analyze(stream);
+            System.out.println(text.toString());
 
             Map<String, String> openbadge = new Extract().extract(text);
             String json = openbadge.get("value");
             if (json != null) {
                 Map<String, Object> map = parseJson(json);
-                System.out.println(map.toString());
-
                 new OpenBadgesTable(tableName).put(key, map, text);
             }
-
             return new MetaText(bucketName, key, text);
         } catch (Exception e) {
             throw new RuntimeException(e);
