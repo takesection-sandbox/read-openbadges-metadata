@@ -14,6 +14,8 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import java.io.ByteArrayInputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHandler.MetaText> {
@@ -64,7 +66,7 @@ public class BadgeHandler implements RequestHandler<BadgeHandler.Event, BadgeHan
     public MetaText handleRequest(Event in, Context context) {
         S3Event s3 = in.Records[0];
         String bucketName = s3.s3.bucket.name;
-        String key = s3.s3.object.key;
+        String key = URLDecoder.decode(s3.s3.object.key, StandardCharsets.UTF_8);
         context.getLogger().log(bucketName + "/" + key);
         GetObjectRequest req = GetObjectRequest.builder()
                 .bucket(bucketName)
