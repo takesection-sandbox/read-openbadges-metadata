@@ -13,6 +13,9 @@
 	},
 	"ghcr.io/devcontainers/features/aws-cli:1": {
 	  "version": "latest"
+	},
+	"ghcr.io/devcontainers/features/rust:1": {
+		"version": "latest"
 	}
   },
 
@@ -20,7 +23,7 @@
   // "forwardPorts": [],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt && python -m bash_kernel.install",
+  "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt && python -m bash_kernel.install && cargo install evcxr_jupyter && evcxr_jupyter --install",
 
   // Configure tool-specific properties.
   "customizations" : {
@@ -34,6 +37,7 @@
 		"ms-toolsai.vscode-jupyter-slideshow",
 		"ms-toolsai.vscode-jupyter-powertoys",
 		"vscjava.vscode-java-pack",
+		"rust-lang.rust-analyzer",
 		"github.copilot"
 	  ]
 	}
