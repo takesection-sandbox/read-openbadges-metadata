@@ -10,10 +10,3 @@ S3にアップロードされたOpen Badgesイメージ (png) からメタ情報
 ## 参考
 
 - [Open Badges](https://openbadges.org/)
-
-## 環境構築
-
-```
-pip install aws-sam-cli
-pip freeze > requirements.txt
-```
